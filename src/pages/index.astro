@@ -1,0 +1,52 @@
+---
+import Base from '../layouts/Base.astro';
+import { countries, recipes, themeVars } from '../data';
+
+const marquee = [...countries, ...countries];
+---
+
+<Base title="Sofra: Middle Eastern kitchens">
+  <div class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Eight kitchens · one table</p>
+      <h1 class="wordmark" aria-label="Sofra">
+        {'Sofra'.split('').map((c, i) => <span style={`--i:${i}`} aria-hidden="true">{c}</span>)}
+      </h1>
+      <p class="lede">Step into the Middle East through what its people cook. Pick a country and sit down.</p>
+      <div class="marquee glass" aria-hidden="true">
+        <div class="marquee-track">
+          {marquee.map((c) => <span class="native" lang={c.lang} dir={c.dir}>{c.native}</span>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="kitchens" style="margin-top:0">
+      <h2 data-reveal>Choose a kitchen</h2>
+      <div class="grid" data-worlds>
+        {countries.map((c, i) => (
+          <a
+            class="country-card glass"
+            href={`/${c.slug}`}
+            style={`${themeVars(c)};--i:${i % 4}`}
+            data-reveal
+            transition:name={`hero-${c.slug}`}
+          >
+            <div>
+              <div class="native native-name" lang={c.lang} dir={c.dir} transition:name={`native-${c.slug}`}>{c.native}</div>
+            </div>
+            <div>
+              {c.name !== c.native && <h3>{c.name}</h3>}
+              <p>{c.tagline}</p>
+              <div class="card-foot">
+                <span class="chip">{recipes[c.slug].length} recipes</span>
+                <span class="arrow" aria-hidden="true">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10M9 4l4 4-4 4" /></svg>
+                </span>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

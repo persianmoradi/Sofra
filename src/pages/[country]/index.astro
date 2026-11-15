@@ -1,0 +1,72 @@
+---
+import Base from '../../layouts/Base.astro';
+import { countries, recipes } from '../../data';
+
+export function getStaticPaths() {
+  return countries.map((country) => ({ params: { country: country.slug }, props: { country } }));
+}
+
+const { country } = Astro.props;
+const list = recipes[country.slug];
+const others = countries.filter((c) => c.slug !== country.slug);
+---
+
+<Base
+  title={`${country.name} · Sofra`}
+  description={country.tagline}
+  country={country}
+  back={{ href: '/', label: 'All kitchens' }}
+>
+  <div class="wrap">
+    <section class="country-hero glass" data-pattern={country.pattern} transition:name={`hero-${country.slug}`}>
+      <div class="medallion" aria-hidden="true"></div>
+      <p class="eyebrow">Kitchen</p>
+      <div class="native native-name" lang={country.lang} dir={country.dir} transition:name={`native-${country.slug}`}>
+        {country.native}
+      </div>
+      <h1 class={country.name === country.native ? 'sr-only' : ''}>{country.name}</h1>
+      <p class="tag">{country.tagline}</p>
+    </section>
+
+    <section class="section about">
+      <div class="panel glass" data-reveal>
+        <h2>The kitchen</h2>
+        <p>{country.intro}</p>
+      </div>
+      <div class="panel glass" data-reveal style="--i:1">
+        <h2>In the pantry</h2>
+        <ul class="chips">{country.pantry.map((p) => <li class="chip">{p}</li>)}</ul>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-reveal>Start cooking</h2>
+      <div class="recipe-grid">
+        {list.map((r, i) => (
+          <a class="recipe-card glass" href={`/${country.slug}/${r.slug}`} data-reveal style={`--i:${i}`}>
+            <span class="native native-name" lang={country.lang} dir={country.dir}>{r.native}</span>
+            <h3>{r.name}</h3>
+            <p>{r.blurb}</p>
+            <div class="chips">
+              <span class="chip">{r.time} min</span>
+              <span class="chip">Serves {r.serves}</span>
+              <span class="chip">{r.level}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 data-reveal>Other kitchens</h2>
+      <div class="others">
+        {others.map((c) => (
+          <a class="other glass" href={`/${c.slug}`}>
+            <span class="native native-name" lang={c.lang} dir={c.dir}>{c.native}</span>
+            <span>{c.name}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</Base>

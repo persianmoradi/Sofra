@@ -1,0 +1,86 @@
+---
+import Base from '../../layouts/Base.astro';
+import { countries, recipes } from '../../data';
+
+export function getStaticPaths() {
+  return countries.flatMap((country) =>
+    recipes[country.slug].map((recipe, i, all) => ({
+      params: { country: country.slug, recipe: recipe.slug },
+      props: { country, recipe, next: all[(i + 1) % all.length] },
+    })),
+  );
+}
+
+const { country, recipe, next } = Astro.props;
+---
+
+<Base
+  title={`${recipe.name} · ${country.name} · Sofra`}
+  description={recipe.blurb}
+  country={country}
+  progress
+  back={{ href: `/${country.slug}`, label: country.name }}
+>
+  <div class="wrap">
+    <header class="recipe-head">
+      <p class="eyebrow">{country.name}</p>
+      <div class="native native-name" lang={country.lang} dir={country.dir}>{recipe.native}</div>
+      <h1>{recipe.name}</h1>
+      <p>{recipe.blurb}</p>
+      <div class="chips">
+        <span class="chip">{recipe.time} min</span>
+        <span class="chip">Serves {recipe.serves}</span>
+        <span class="chip">{recipe.level}</span>
+      </div>
+    </header>
+
+    <div class="recipe-body">
+      <aside class="ingredients panel glass" data-reveal>
+        <h2>Ingredients</h2>
+        {recipe.ingredients.map((g) => (
+          <>
+            {g.title && <h3>{g.title}</h3>}
+            <ul>
+              {g.items.map((item) => (
+                <li>
+                  <label class="ing"><input type="checkbox" /><span>{item}</span></label>
+                </li>
+              ))}
+            </ul>
+          </>
+        ))}
+      </aside>
+
+      <div>
+        <ol class="steps">
+          {recipe.steps.map((s, i) => (
+            <li class="step glass" data-reveal>
+              <span class="n" aria-hidden="true">{i + 1}</span>
+              <p>{s}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div class="tip panel glass" data-reveal>
+          <h3>Cook’s note</h3>
+          <p>{recipe.tip}</p>
+        </div>
+
+        <p class="source" data-reveal>
+          Written after studying:
+          {recipe.sources.map((s, i) => (
+            <>
+              {i > 0 && '; '}
+              {s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer">{s.who}, {s.work}</a> : <>{s.who}, {s.work}</>}
+            </>
+          ))}.
+        </p>
+      </div>
+    </div>
+
+    <nav class="next" aria-label="More recipes">
+      <a class="glass nav-link" href={`/${country.slug}`}>← {country.name}</a>
+      <a class="glass nav-link" href={`/${country.slug}/${next.slug}`}>Next: {next.name} →</a>
+    </nav>
+  </div>
+</Base>

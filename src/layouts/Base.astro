@@ -1,0 +1,102 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import { patternUri, themeVars } from '../data';
+import type { Country } from '../data/types';
+
+interface Props {
+  title: string;
+  description?: string;
+  country?: Country;
+  back?: { href: string; label: string };
+  progress?: boolean;
+}
+const { title, description = 'Eight Middle Eastern kitchens, one table. Recipes from the region’s best cooks.', country, back, progress } = Astro.props;
+
+const home = 'iran'; // pattern for the home page backdrop (see homeVars)
+const homeVars =
+  `--base:#0b0a12;--b1:#c8452d;--b2:#1f6f8b;--b3:#e9c46a;--accent:#f4c95d;` +
+  `--pattern:${patternUri(home, '#f4c95d')}`;
+const vars = country ? themeVars(country) : homeVars;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content={country?.theme.base ?? '#0b0a12'} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Inter:wght@400..700&family=Noto+Naskh+Arabic:wght@400..700&display=swap"
+    />
+    <title>{title}</title>
+    <ClientRouter />
+  </head>
+  <body style={vars}>
+    <div class="stage" aria-hidden="true"></div>
+    {progress && <div class="progress" aria-hidden="true"></div>}
+
+    <header class="nav glass">
+      <a class="brand" href="/" aria-label="Sofra, home">
+        <b>Sofra</b><span lang="ar" dir="rtl">سفره</span>
+      </a>
+      {back ? <a class="nav-link" href={back.href}>{back.label}</a> : <a class="nav-link" href="#kitchens">Kitchens</a>}
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer>
+      <div class="wrap">
+        <p>
+          Recipes are written in our own words after studying the cooks and books credited on each page. Please buy their cookbooks.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const root = document.documentElement;
+
+      // pointer-following specular highlight on glass
+      document.addEventListener('pointermove', (e) => {
+        const g = (e.target as Element | null)?.closest<HTMLElement>('.glass');
+        if (!g) return;
+        const r = g.getBoundingClientRect();
+        g.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        g.style.setProperty('--my', `${e.clientY - r.top}px`);
+      });
+
+      const keys = ['--base', '--b1', '--b2', '--b3', '--accent', '--pattern'];
+      function init() {
+        // scroll reveals
+        const io = new IntersectionObserver(
+          (entries) => entries.forEach((en) => en.isIntersecting && (en.target.classList.add('in'), io.unobserve(en.target))),
+          { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
+        );
+        document.querySelectorAll('[data-reveal]').forEach((el) => io.observe(el));
+
+        // hovering a country card tints the whole stage with that country
+        const grid = document.querySelector<HTMLElement>('[data-worlds]');
+        if (!grid) return;
+        const body = document.body;
+        const saved = Object.fromEntries(keys.map((k) => [k, body.style.getPropertyValue(k)]));
+        const tint = (card: HTMLElement) =>
+          keys.forEach((k) => body.style.setProperty(k, card.style.getPropertyValue(k)));
+        const reset = () => keys.forEach((k) => body.style.setProperty(k, saved[k]));
+        grid.querySelectorAll<HTMLElement>('a').forEach((a) => {
+          a.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && tint(a));
+          a.addEventListener('focus', () => tint(a));
+          a.addEventListener('blur', reset);
+        });
+        grid.addEventListener('pointerleave', reset);
+      }
+      document.addEventListener('astro:page-load', init);
+    </script>
+  </body>
+</html>

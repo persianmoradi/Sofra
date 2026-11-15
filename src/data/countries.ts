@@ -1,0 +1,108 @@
+import type { Country } from './types';
+
+export const countries: Country[] = [
+  {
+    slug: 'turkey',
+    name: 'Türkiye',
+    native: 'Türkiye',
+    lang: 'tr',
+    dir: 'ltr',
+    tagline: 'Fire, butter and a bridge between two continents.',
+    intro:
+      'Turkish cooking is a map of empires folded into a plate: Anatolian grain and yogurt, Aegean olive oil, the chilli-red heat of the south-east, and the palace kitchens of Istanbul. Meals are built around bread, a grill, and the rule that nobody leaves hungry.',
+    pantry: ['Pul biber', 'Biber salçası', 'Sumac', 'Yogurt', 'Bulgur', 'Red lentils'],
+    pattern: 'turkey',
+    theme: { base: '#14070b', b1: '#c8102e', b2: '#0b7a8f', b3: '#f2b134', accent: '#ffd166' },
+  },
+  {
+    slug: 'iran',
+    name: 'Iran',
+    native: 'ایران',
+    lang: 'fa',
+    dir: 'rtl',
+    tagline: 'Saffron, herbs and the patience of a slow pot.',
+    intro:
+      'Persian food is about balance: sour against sweet, fresh herbs against slow-simmered meat, and rice treated as the main event. The golden crust at the bottom of the pot is the thing everyone fights over.',
+    pantry: ['Saffron', 'Dried limes', 'Barberries', 'Fenugreek leaf', 'Pomegranate', 'Rose water'],
+    pattern: 'iran',
+    theme: { base: '#07131c', b1: '#0f8b8d', b2: '#1d3f8f', b3: '#e9c46a', accent: '#7be0d0' },
+  },
+  {
+    slug: 'egypt',
+    name: 'Egypt',
+    native: 'مصر',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'The Nile on a plate: beans, greens and street-corner genius.',
+    intro:
+      'Egyptian food runs on legumes, garlic and green leaves, shaped by the Nile and by a street-food culture that feeds a whole city for pennies. It is generous, tangy and deeply comforting.',
+    pantry: ['Fava beans', 'Molokhia', 'Cumin', 'Coriander', 'Garlic', 'Vermicelli'],
+    pattern: 'egypt',
+    theme: { base: '#170f05', b1: '#d9962b', b2: '#1f6f8b', b3: '#b5442a', accent: '#f4c95d' },
+  },
+  {
+    slug: 'iraq',
+    name: 'Iraq',
+    native: 'العراق',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'Between two rivers, the oldest recipes on earth.',
+    intro:
+      'Mesopotamia wrote down the first recipes on clay tablets. Today Iraqi cooking still lives on the Tigris and Euphrates: river fish over open fire, stuffed vegetables with a sour edge, and rice perfumed with dill and baharat.',
+    pantry: ['Baharat', 'Tamarind', 'Dried lime', 'Dill', 'Pomegranate molasses', 'Amba'],
+    pattern: 'iraq',
+    theme: { base: '#0f1210', b1: '#2f7d6b', b2: '#c9742c', b3: '#1b4f72', accent: '#e8b86b' },
+  },
+  {
+    slug: 'syria',
+    name: 'Syria',
+    native: 'سوريا',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'Aleppo’s chillies, Damascus’ sweet things, and a table that never ends.',
+    intro:
+      'Syrian cooking is one of the great urban cuisines: Aleppo alone is said to have more than a dozen kinds of kibbeh. Walnuts, red pepper, pomegranate and patient hands turn modest ingredients into feasts.',
+    pantry: ['Aleppo pepper', 'Walnuts', 'Pomegranate molasses', 'Allspice', 'Bulgur', 'Pine nuts'],
+    pattern: 'syria',
+    theme: { base: '#150b10', b1: '#8e2c48', b2: '#1f5f4a', b3: '#c79a3e', accent: '#ff9eb5' },
+  },
+  {
+    slug: 'lebanon',
+    name: 'Lebanon',
+    native: 'لبنان',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'Mezze, mountains and lemon on everything.',
+    intro:
+      'Lebanese food is fresh, sharp and made to be shared: a table of small plates, herbs by the bunch, olive oil poured without apology, and a lemon never far away.',
+    pantry: ['Tahini', 'Lemons', 'Flat-leaf parsley', 'Bulgur', 'Seven-spice', 'Olive oil'],
+    pattern: 'lebanon',
+    theme: { base: '#0a140e', b1: '#1f8a4c', b2: '#b3202e', b3: '#d9d2b8', accent: '#7ee2a0' },
+  },
+  {
+    slug: 'palestine',
+    name: 'Palestine',
+    native: 'فلسطين',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'Olive oil, sumac and recipes that outlast everything.',
+    intro:
+      'Palestinian food is the cooking of olive groves, village ovens and long family tables. Sumac, allspice and good oil carry the dishes, and recipes are passed down at the stove, not on paper.',
+    pantry: ['Olive oil', 'Sumac', 'Allspice', 'Za’atar', 'Taboon bread', 'Nabulsi cheese'],
+    pattern: 'palestine',
+    theme: { base: '#0b120d', b1: '#b3262f', b2: '#1f7a4a', b3: '#d9c9a3', accent: '#ff8a7a' },
+  },
+  {
+    slug: 'morocco',
+    name: 'Morocco',
+    native: 'المغرب',
+    lang: 'ar',
+    dir: 'rtl',
+    tagline: 'Clay pots, preserved lemon and a spice market in every dish.',
+    intro:
+      'Moroccan cooking is slow, fragrant and layered: tagines that perfume a whole house, soups that break the Ramadan fast, and smoky salads that taste better the next day.',
+    pantry: ['Preserved lemon', 'Ras el hanout', 'Saffron', 'Argan oil', 'Cumin', 'Olives'],
+    pattern: 'morocco',
+    theme: { base: '#0a0f1f', b1: '#1e56a0', b2: '#c8452d', b3: '#e1b12c', accent: '#5fb0ff' },
+  },
+];
