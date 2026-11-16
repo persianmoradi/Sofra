@@ -1,0 +1,27 @@
+---
+import Plate from './Plate.astro';
+import { themeVars } from '../data';
+import type { Country, Recipe } from '../data/types';
+
+const { country, recipe, i = 0, showCountry = false } = Astro.props as {
+  country: Country; recipe: Recipe; i?: number; showCountry?: boolean;
+};
+const lv = { Easy: 1, Medium: 2, Project: 3 }[recipe.level];
+---
+
+<a class="recipe-card glass" href={`/${country.slug}/${recipe.slug}`} style={`${themeVars(country)};--i:${i}`} data-reveal>
+  <div class="card-top">
+    <div>
+      {showCountry && <p class="eyebrow">{country.name}</p>}
+      <span class="native native-name" lang={country.lang} dir={country.dir}>{recipe.native}</span>
+    </div>
+    <Plate seed={recipe.slug} size={112} />
+  </div>
+  <h3>{recipe.name}</h3>
+  <p>{recipe.blurb}</p>
+  <div class="chips">
+    <span class="chip">{recipe.time} min</span>
+    <span class="chip">Serves {recipe.serves}</span>
+    <span class="chip lvl"><span class="dots" aria-hidden="true">{[1, 2, 3].map((n) => <i class:list={{ on: n <= lv }}></i>)}</span>{recipe.level}</span>
+  </div>
+</a>

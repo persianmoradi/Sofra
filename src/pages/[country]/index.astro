@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import RecipeCard from '../../components/RecipeCard.astro';
 import { countries, recipes } from '../../data';
 
 export function getStaticPaths() {
@@ -40,20 +41,9 @@ const others = countries.filter((c) => c.slug !== country.slug);
     </section>
 
     <section class="section">
-      <h2 data-reveal>Start cooking</h2>
+      <h2 data-reveal>Start cooking <small class="count">{list.length} recipes</small></h2>
       <div class="recipe-grid">
-        {list.map((r, i) => (
-          <a class="recipe-card glass" href={`/${country.slug}/${r.slug}`} data-reveal style={`--i:${i}`}>
-            <span class="native native-name" lang={country.lang} dir={country.dir}>{r.native}</span>
-            <h3>{r.name}</h3>
-            <p>{r.blurb}</p>
-            <div class="chips">
-              <span class="chip">{r.time} min</span>
-              <span class="chip">Serves {r.serves}</span>
-              <span class="chip">{r.level}</span>
-            </div>
-          </a>
-        ))}
+        {list.map((r, i) => <RecipeCard country={country} recipe={r} i={i % 3} />)}
       </div>
     </section>
 

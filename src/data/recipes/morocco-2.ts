@@ -1,0 +1,111 @@
+import type { Recipe } from '../types';
+
+const wolfertCouscous = { who: 'Paula Wolfert', work: 'Couscous and Other Good Food from Morocco' };
+
+export const morocco2: Recipe[] = [
+  {
+    slug: 'seven-vegetable-couscous',
+    name: 'Couscous with seven vegetables',
+    native: 'كسكس',
+    blurb: 'Friday couscous: light, fluffy grains under a pot of lamb and vegetables in a golden broth.',
+    time: 150,
+    serves: 6,
+    level: 'Project',
+    ingredients: [
+      {
+        title: 'Stew',
+        items: [
+          '800 g lamb shoulder or chicken pieces',
+          '1 onion, sliced',
+          '1 tsp ginger, 1 tsp turmeric, ½ tsp black pepper',
+          'Pinch of saffron',
+          '3 carrots',
+          '2 turnips',
+          '3 courgettes',
+          '¼ small cabbage, in wedges',
+          '2 tomatoes',
+          '1 can chickpeas',
+          'Handful of coriander and parsley',
+        ],
+      },
+      { title: 'Couscous', items: ['500 g medium couscous', '2 tbsp butter', '2 tbsp olive oil', 'Salt'] },
+    ],
+    steps: [
+      'Put the meat, onion, spices, saffron and herbs in the base of a couscoussier or large pot with 1.5 litres of water. Simmer for 1 hour.',
+      'Add the carrots, turnips and tomatoes. Simmer for 20 minutes, then add the cabbage, courgettes and chickpeas for 15 more minutes.',
+      'Meanwhile, rub the couscous with oil, salt and ½ cup water. Steam it over the stew or in a steamer for 15 minutes, fluff, sprinkle with a little water, and steam again.',
+      'Stir the butter through the hot couscous.',
+      'Mound the couscous on a large dish and make a hollow. Arrange the meat and vegetables in it and spoon over plenty of broth. Serve extra broth on the side.',
+    ],
+    tip: 'Fluff the grains between steamings, breaking up every lump. The second steaming is what makes them light.',
+    sources: [wolfertCouscous],
+  },
+  {
+    slug: 'chicken-pastilla',
+    name: 'Chicken pastilla',
+    native: 'بسطيلة',
+    blurb: 'Layers of crisp pastry around spiced chicken and almonds, dusted with icing sugar and cinnamon. Sweet and savoury.',
+    time: 170,
+    serves: 8,
+    level: 'Project',
+    ingredients: [
+      {
+        title: 'Chicken',
+        items: [
+          '8 bone-in chicken thighs',
+          '2 onions, grated',
+          '1 tsp ginger, 1 tsp turmeric, 1 tsp cinnamon',
+          'Pinch of saffron',
+          'Handful of coriander and parsley, chopped',
+          '4 tbsp butter',
+          '6 eggs, beaten',
+        ],
+      },
+      { title: 'Almond layer', items: ['150 g almonds, fried and chopped', '2 tbsp icing sugar', '1 tsp cinnamon'] },
+      { title: 'Pastry', items: ['12 sheets filo (or warka)', '100 g butter, melted'] },
+      { title: 'To finish', items: ['Icing sugar', 'Ground cinnamon'] },
+    ],
+    steps: [
+      'Put the chicken in a pot with the onions, ginger, turmeric, cinnamon, saffron, butter and 1 cup water. Cover and simmer for 45 minutes until it falls off the bone.',
+      'Lift out the chicken, shred it, and discard the bones and skin. Boil the sauce down to about 1 cup, add the herbs, and then stir in the eggs until softly scrambled. Combine with the chicken.',
+      'Mix the almonds with the sugar and cinnamon.',
+      'Heat the oven to 190 °C. Layer 6 buttered sheets of filo in a round tin so they overhang. Add half the almond mix, then the chicken and eggs, then the rest of the almonds.',
+      'Fold the overhang over the filling, cover with the remaining buttered sheets, and tuck the edges in under the pie.',
+      'Bake for 30–35 minutes until golden, turn out on to a plate and dust with icing sugar and cinnamon in a lattice.',
+    ],
+    tip: 'Drain the chicken mix well. A wet filling softens the pastry from the inside.',
+    sources: [wolfertCouscous],
+  },
+  {
+    slug: 'msemen',
+    name: 'Msemen',
+    native: 'مسمن',
+    blurb: 'Flaky square flatbreads folded around layers of butter and fried until crisp. Perfect with honey and mint tea.',
+    time: 75,
+    serves: 6,
+    level: 'Medium',
+    ingredients: [
+      {
+        items: [
+          '300 g plain flour',
+          '100 g fine semolina',
+          '1 tsp salt',
+          '1 tsp sugar',
+          '220 ml warm water',
+          '100 g melted butter mixed with 3 tbsp oil',
+          'Honey, to serve',
+        ],
+      },
+    ],
+    steps: [
+      'Mix the flour, semolina, salt and sugar and add the water. Knead for 10 minutes to a soft, slightly sticky dough.',
+      'Divide into 10 balls, coat with oil, cover and rest for 15 minutes.',
+      'Oil your work surface and flatten a ball into a very thin square, as thin as you can without tearing.',
+      'Brush with the butter mix, then fold into thirds and thirds again to make a small square. Repeat for all the dough. Rest the squares for 10 minutes.',
+      'Press each square out to about 12 cm and cook on a lightly oiled pan over medium heat for 2–3 minutes per side, until golden and flaky.',
+      'Serve warm with honey and butter.',
+    ],
+    tip: 'The more times you fold it, the flakier it gets. Keep your hands oiled so the thin dough does not stick.',
+    sources: [wolfertCouscous],
+  },
+];

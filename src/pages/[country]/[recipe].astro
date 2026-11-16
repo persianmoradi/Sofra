@@ -1,6 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
+import Plate from '../../components/Plate.astro';
 import { countries, recipes } from '../../data';
+import { parseItem, stepParts } from '../../data/format';
 
 export function getStaticPaths() {
   return countries.flatMap((country) =>
@@ -12,6 +14,8 @@ export function getStaticPaths() {
 }
 
 const { country, recipe, next } = Astro.props;
+const lv = { Easy: 1, Medium: 2, Project: 3 }[recipe.level];
+const count = recipe.ingredients.reduce((n, g) => n + g.items.length, 0);
 ---
 
 <Base
@@ -23,27 +27,46 @@ const { country, recipe, next } = Astro.props;
 >
   <div class="wrap">
     <header class="recipe-head">
-      <p class="eyebrow">{country.name}</p>
-      <div class="native native-name" lang={country.lang} dir={country.dir}>{recipe.native}</div>
-      <h1>{recipe.name}</h1>
-      <p>{recipe.blurb}</p>
-      <div class="chips">
-        <span class="chip">{recipe.time} min</span>
-        <span class="chip">Serves {recipe.serves}</span>
-        <span class="chip">{recipe.level}</span>
+      <div class="rh-text">
+        <p class="eyebrow">{country.name}</p>
+        <div class="native native-name" lang={country.lang} dir={country.dir}>{recipe.native}</div>
+        <h1>{recipe.name}</h1>
+        <p class="blurb">{recipe.blurb}</p>
+        <div class="chips">
+          <span class="chip">{recipe.time} min</span>
+          <span class="chip">Serves {recipe.serves}</span>
+          <span class="chip lvl"><span class="dots" aria-hidden="true">{[1, 2, 3].map((n) => <i class:list={{ on: n <= lv }}></i>)}</span>{recipe.level}</span>
+        </div>
+        <div class="tools">
+          <button type="button" class="tool" data-print>Print</button>
+          <button type="button" class="tool" data-wake aria-pressed="false" hidden>Keep screen on</button>
+        </div>
       </div>
+      <div class="plate-wrap"><Plate seed={recipe.slug} size={280} /></div>
     </header>
 
     <div class="recipe-body">
       <aside class="ingredients panel glass" data-reveal>
-        <h2>Ingredients</h2>
+        <h2>Ingredients <small>{count}</small></h2>
+        <div class="scaler" data-base={recipe.serves} data-cur={recipe.serves}>
+          <button type="button" data-scale="-1" aria-label="Fewer servings">−</button>
+          <span><b data-count>{recipe.serves}</b> servings</span>
+          <button type="button" data-scale="1" aria-label="More servings">+</button>
+        </div>
         {recipe.ingredients.map((g) => (
           <>
             {g.title && <h3>{g.title}</h3>}
             <ul>
               {g.items.map((item) => (
                 <li>
-                  <label class="ing"><input type="checkbox" /><span>{item}</span></label>
+                  <label class="ing">
+                    <input type="checkbox" />
+                    <span>
+                      {parseItem(item).map((p) =>
+                        't' in p ? p.t : <span class="qty" data-lo={p.lo} data-hi={p.hi} data-raw={p.raw}>{p.raw}</span>,
+                      )}
+                    </span>
+                  </label>
                 </li>
               ))}
             </ul>
@@ -52,11 +75,19 @@ const { country, recipe, next } = Astro.props;
       </aside>
 
       <div>
+        <h2 class="method">Method</h2>
         <ol class="steps">
           {recipe.steps.map((s, i) => (
             <li class="step glass" data-reveal>
-              <span class="n" aria-hidden="true">{i + 1}</span>
-              <p>{s}</p>
+              <label>
+                <input type="checkbox" class="sr-only" />
+                <span class="n" aria-hidden="true">{i + 1}</span>
+                <span class="step-text">
+                  {stepParts(s).map((p) =>
+                    't' in p ? p.t : <button type="button" class="timer" data-sec={p.sec}>⏱ {p.label}</button>,
+                  )}
+                </span>
+              </label>
             </li>
           ))}
         </ol>
@@ -84,3 +115,102 @@ const { country, recipe, next } = Astro.props;
     </nav>
   </div>
 </Base>
+
+<script>
+  // ── servings scaler ──
+  const FR: [number, string][] = [[0, ''], [0.25, '¼'], [1 / 3, '⅓'], [0.5, '½'], [2 / 3, '⅔'], [0.75, '¾'], [1, '']];
+  function fmt(v: number) {
+    if (v >= 50) return String(Math.round(v / 5) * 5);
+    if (v >= 10) return String(Math.round(v));
+    let w = Math.floor(v), best = FR[0];
+    const f = v - w;
+    for (const c of FR) if (Math.abs(c[0] - f) < Math.abs(best[0] - f)) best = c;
+    if (best[0] === 1) { w += 1; best = FR[0]; }
+    if (!w && !best[0]) return '¼';
+    return (w ? String(w) : '') + best[1];
+  }
+
+  // ── timer ──
+  let tick: number | undefined, bar: HTMLElement | null = null, ctx: AudioContext | undefined;
+  function stopTimer() { clearInterval(tick); bar?.remove(); bar = null; }
+  function beep() {
+    try {
+      if (!ctx) return;
+      const o = ctx.createOscillator(), g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination); o.frequency.value = 880;
+      g.gain.setValueAtTime(0.2, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.4);
+      o.start(); o.stop(ctx.currentTime + 1.4);
+    } catch {}
+    navigator.vibrate?.([300, 150, 300]);
+  }
+  function startTimer(sec: number) {
+    stopTimer();
+    try { ctx = ctx ?? new AudioContext(); } catch {}
+    const end = Date.now() + sec * 1000;
+    bar = document.createElement('div');
+    bar.className = 'timer-bar glass';
+    bar.setAttribute('role', 'timer');
+    bar.innerHTML = '<span class="t"></span><button type="button" data-cancel>Cancel</button>';
+    document.body.append(bar);
+    const t = bar.querySelector('.t')!;
+    const draw = () => {
+      const left = Math.max(0, Math.ceil((end - Date.now()) / 1000));
+      if (!left) {
+        clearInterval(tick);
+        t.textContent = 'Time’s up';
+        bar?.classList.add('done');
+        beep();
+        return;
+      }
+      t.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    };
+    draw();
+    tick = window.setInterval(draw, 500);
+  }
+
+  // ── keep screen on ──
+  let lock: WakeLockSentinel | null = null;
+
+  document.addEventListener('click', async (e) => {
+    const el = e.target as Element;
+
+    const s = el.closest<HTMLElement>('[data-scale]');
+    if (s) {
+      const box = s.closest<HTMLElement>('.scaler')!;
+      const base = +box.dataset.base!;
+      const cur = Math.min(24, Math.max(1, +box.dataset.cur! + +s.dataset.scale!));
+      box.dataset.cur = String(cur);
+      box.querySelector('[data-count]')!.textContent = String(cur);
+      const k = cur / base;
+      document.querySelectorAll<HTMLElement>('.ingredients .qty').forEach((q) => {
+        const lo = +q.dataset.lo!, hi = +q.dataset.hi!;
+        q.textContent = cur === base ? q.dataset.raw! : lo === hi ? fmt(lo * k) : `${fmt(lo * k)}–${fmt(hi * k)}`;
+      });
+      return;
+    }
+
+    const t = el.closest<HTMLElement>('.timer');
+    if (t) return startTimer(+t.dataset.sec!);
+    if (el.closest('[data-cancel]')) return stopTimer();
+    if (el.closest('[data-print]')) return window.print();
+
+    const w = el.closest<HTMLElement>('[data-wake]');
+    if (w) {
+      try {
+        if (lock) { await lock.release(); lock = null; }
+        else lock = await navigator.wakeLock.request('screen');
+      } catch {}
+      w.setAttribute('aria-pressed', String(!!lock));
+    }
+  });
+
+  document.addEventListener('astro:page-load', () => {
+    document.querySelectorAll<HTMLElement>('[data-wake]').forEach((b) => (b.hidden = !('wakeLock' in navigator)));
+  });
+  document.addEventListener('astro:before-swap', () => {
+    stopTimer();
+    lock?.release().catch(() => {});
+    lock = null;
+  });
+</script>

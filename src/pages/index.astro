@@ -1,8 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
+import RecipeCard from '../components/RecipeCard.astro';
 import { countries, recipes, themeVars } from '../data';
 
 const marquee = [...countries, ...countries];
+const all = countries.flatMap((c) => recipes[c.slug].map((r) => ({ c, r })));
+const quick = all.filter(({ r }) => r.time <= 30).slice(0, 6);
+// compact index for the search box: names plus ingredients, so "aubergine" finds dishes
+const index = all.map(({ c, r }) => ({
+  u: `/${c.slug}/${r.slug}`,
+  n: r.name,
+  nat: r.native,
+  c: c.name,
+  m: r.time,
+  s: `${r.name} ${r.native} ${c.name} ${r.blurb} ${r.ingredients.flatMap((g) => g.items).join(' ')}`.toLowerCase(),
+}));
 ---
 
 <Base title="Sofra: Middle Eastern kitchens">
@@ -20,7 +32,14 @@ const marquee = [...countries, ...countries];
       </div>
     </section>
 
-    <section class="section" id="kitchens" style="margin-top:0">
+    <section class="finder" data-reveal>
+      <label class="sr-only" for="q">Search dishes or ingredients</label>
+      <input id="q" class="search glass" type="search" placeholder="Search a dish or ingredient, e.g. aubergine" autocomplete="off" enterkeyhint="search" />
+      <ul id="results" class="results" aria-live="polite"></ul>
+    </section>
+    <script type="application/json" id="index" set:html={JSON.stringify(index)} />
+
+    <section class="section" id="kitchens" style="margin-top:clamp(40px,7vw,80px)">
       <h2 data-reveal>Choose a kitchen</h2>
       <div class="grid" data-worlds>
         {countries.map((c, i) => (
@@ -48,5 +67,48 @@ const marquee = [...countries, ...countries];
         ))}
       </div>
     </section>
+
+    <section class="section">
+      <h2 data-reveal>Ready in 30 minutes <small class="count">weeknight dishes</small></h2>
+      <div class="recipe-grid">
+        {quick.map(({ c, r }, i) => <RecipeCard country={c} recipe={r} i={i % 3} showCountry />)}
+      </div>
+    </section>
   </div>
 </Base>
+
+<script>
+  type Hit = { u: string; n: string; nat: string; c: string; m: number; s: string };
+  document.addEventListener('input', (e) => {
+    const input = e.target as HTMLInputElement;
+    if (input.id !== 'q') return;
+    const list = document.getElementById('results')!;
+    const idx: Hit[] = JSON.parse(document.getElementById('index')!.textContent!);
+    const terms = input.value.toLowerCase().split(/\s+/).filter(Boolean);
+    list.replaceChildren();
+    if (!terms.length) return;
+    const hits = idx.filter((h) => terms.every((t) => h.s.includes(t))).slice(0, 8);
+    if (!hits.length) {
+      const li = document.createElement('li');
+      li.className = 'none';
+      li.textContent = 'Nothing yet. Try “lamb”, “lentils” or “rice”.';
+      return list.append(li);
+    }
+    for (const h of hits) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'result glass';
+      a.href = h.u;
+      const nat = document.createElement('span');
+      nat.className = 'native';
+      nat.textContent = h.nat;
+      const name = document.createElement('b');
+      name.textContent = h.n;
+      const meta = document.createElement('small');
+      meta.textContent = `${h.c} · ${h.m} min`;
+      a.append(nat, name, meta);
+      li.append(a);
+      list.append(li);
+    }
+  });
+</script>
