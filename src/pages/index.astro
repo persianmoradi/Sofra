@@ -48,10 +48,9 @@ const index = all.map(({ c, r }) => ({
             href={`/${c.slug}`}
             style={`${themeVars(c)};--i:${i % 4}`}
             data-reveal
-            transition:name={`hero-${c.slug}`}
           >
             <div>
-              <div class="native native-name" lang={c.lang} dir={c.dir} transition:name={`native-${c.slug}`}>{c.native}</div>
+              <div class="native native-name" lang={c.lang} dir={c.dir}>{c.native}</div>
             </div>
             <div>
               {c.name !== c.native && <h3>{c.name}</h3>}

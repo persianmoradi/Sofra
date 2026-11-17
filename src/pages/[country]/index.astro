@@ -19,10 +19,10 @@ const others = countries.filter((c) => c.slug !== country.slug);
   back={{ href: '/', label: 'All kitchens' }}
 >
   <div class="wrap">
-    <section class="country-hero glass" data-pattern={country.pattern} transition:name={`hero-${country.slug}`}>
+    <section class="country-hero glass" data-pattern={country.pattern}>
       <div class="medallion" aria-hidden="true"></div>
       <p class="eyebrow">Kitchen</p>
-      <div class="native native-name" lang={country.lang} dir={country.dir} transition:name={`native-${country.slug}`}>
+      <div class="native native-name" lang={country.lang} dir={country.dir}>
         {country.native}
       </div>
       <h1 class={country.name === country.native ? 'sr-only' : ''}>{country.name}</h1>
